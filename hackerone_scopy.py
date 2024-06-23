@@ -8,8 +8,8 @@ from getpass import getpass
 
 
 
-username = "<<-Hackerone-USERNAME->>"                                      #input("Hackerone username: ").strip()
-token = "<<-Hackerone-TOKEN->>"                                          #getpass(f"{username} token: ").strip()
+username = ""                                      #input("Hackerone username: ").strip()
+token = ""      #getpass(f"{username} token: ").strip()
 
 headers = {
     "Content-Type": "application/json",
@@ -22,22 +22,54 @@ AuthRequest.auth = (username, token)
 AuthRequest.headers.update(headers)
 
 
-for page in range(1,29):
+page =0
+programs=[]
+
+while True:
+    page +=1
     
-    URL = f"https://api.hackerone.com/v1/hackers/programs?page[number]={page}"
+    URL = f'https://api.hackerone.com/v1/hackers/programs?page[number]={page}'
 
-    Req = AuthRequest.get(URL).json()
+    Req = AuthRequest.get(URL, verify=True)
+    filter_handle = Req.text.split('"handle":')
     
+    found = 0
+    for p in filter_handle:
+        if p.startswith('"'):
+            Result = p.split(",")[0].strip('"')
+            programs.append(Result)
+            found +=1
 
-    filter_handle = re.match('handle', Req)
-    print(filter_handle)
+    if(found==0) or Req.status_code!=200:
+        print("Programs Finished")
+        break
 
 
+assets = []
+pro = 0
+while pro <= len(programs):
+    
+    URL2 = f'https://api.hackerone.com/v1/hackers/programs/{programs[pro]}/structured_scopes'
 
-"""
-Links to fetch assets
+    Req2 = AuthRequest.get(URL2, verify=True)
+    filter_asset = Req2.text.split('"asset_identifier":')
 
-https://api.hackerone.com/v1/hackers/programs?page[number]=28
-https://api.hackerone.com/v1/hackers/programs/<<-Program-Handle->>/structured_scopes
+    found2 = 0
+    for f in filter_asset:
+        if f.startswith('"'):
+            Result2 = f.split(",")[0].strip('"')
+            assets.append(Result2)
+            found2 +=1
+            pro +=1
 
-"""
+    if(found2==0) or Req2.status_code!=200:
+        print("Assets Finished Or Error")
+        break   
+
+
+print(assets)
+
+Final = str(set(assets)).replace(']','').replace('[','').replace("'","").replace(',','\n').replace('"','').replace('}','').replace('{','')
+with open("Results.txt", "w") as file:
+    print("Results Saved in Results.txt, enjoy")
+    file.write(Final)
