@@ -8,8 +8,8 @@ from getpass import getpass
 
 
 
-username = "0xr3dhunt"                                      #input("Hackerone username: ").strip()
-token = "cqTJbVxlJDpfAx8JuJbKAHIoYrLsaUDrIuBg2iBJaHc="      #getpass(f"{username} token: ").strip()
+username = "<<-Hackerone-USERNAME->>"                                      #input("Hackerone username: ").strip()
+token = "<<-Hackerone-TOKEN->>"                                          #getpass(f"{username} token: ").strip()
 
 headers = {
     "Content-Type": "application/json",
@@ -35,44 +35,9 @@ for page in range(1,29):
 
 
 """
-endpoint = "programs"
-
-programs = set()
-
-page_number = 1
-while True:
-    response = self._get(endpoint, params={"page[number]": page_number})
-
-    if not response["links"].get("next") or not response.get("data"):
-        break
-    else:
-        page_number += 1
-
-        programs.update(
-            [
-                HackerOneProgram.load_from_dict(program)
-                for program in response["data"]
-            ]
-        )
-
-return programs
-
-
-
-all_programs = session.list_programs()
-
-for asset in session.get_program(all_programs[0]):
-    print(asset)
-"""
-
-"""
-cqTJbVxlJDpfAx8JuJbKAHIoYrLsaUDrIuBg2iBJaHc=
-
-
-{'data': [{'id': '13', 'type': 'program', 'attributes': {'handle': 'security',
-
-https://api.hackerone.com/v1/hackers/programs/goldmansachs/structured_scopes
+Links to fetch assets
 
 https://api.hackerone.com/v1/hackers/programs?page[number]=28
+https://api.hackerone.com/v1/hackers/programs/<<-Program-Handle->>/structured_scopes
 
 """
